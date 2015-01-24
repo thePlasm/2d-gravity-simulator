@@ -1,0 +1,31 @@
+body {
+	position: relative;
+	margin: 0px;
+}
+#canvas {
+	margin: 0px;
+	padding: 0px;
+	border: 16px solid #000000;
+	border-bottom: 32px solid #000000;
+}
+#wrapper {
+	position: relative;
+	margin:16px;
+}
+#massinput {
+	height: 32px;
+	width: 96px;
+	margin:auto;
+	position: absolute;
+	bottom: 5px;
+	right: -1px;
+}
+#massentry {
+	background-color:white;
+	height: 32px;
+	width: 96px;
+	margin:auto;
+	position: absolute;
+	bottom: 5px;
+	right: 95px;
+}
