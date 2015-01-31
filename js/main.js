@@ -12,6 +12,7 @@ var mousePos = {x: 0, y: 0};
 var oldMousePos = {x: 0, y: 0};
 var colid = 0;
 var restitution = 0.5;
+var button = 0;
 var entities = [ 
 ];
 function getMousePos(evt) {
@@ -26,9 +27,19 @@ canvas.addEventListener('mousemove', function(evt) {
 canvas.addEventListener('mousedown', function(evt) {
     oldMousePos = getMousePos(evt);
 }, false);
-canvas.addEventListener('mouseup', function() {
-	if (mousePos.x >= Number(document.getElementById('radiusinput').value) && mousePos.y >= Number(document.getElementById('radiusinput').value) && mousePos.x <= (canvas.width - Number(document.getElementById('radiusinput').value)) && mousePos.y <= (canvas.height - Number(document.getElementById('radiusinput').value)) && testCol(document.getElementById('radiusinput').value, mousePos.x, mousePos.y) && !isNaN(+(document.getElementById('massinput').value)) && !isNaN(+(document.getElementById('radiusinput').value))) {
-		entities.push([[mousePos.x, mousePos.y], [(oldMousePos.x-mousePos.x)/fps, (oldMousePos.y-mousePos.y)/fps], +(document.getElementById('massinput').value), +(document.getElementById('radiusinput').value)]);
+canvas.addEventListener('mouseup', function(evt) {
+	evt = evt || window.event;
+    button = evt.which || evt.button;
+	if (button == 1) {
+		if (mousePos.x >= Number(document.getElementById('radiusinput').value) && mousePos.y >= Number(document.getElementById('radiusinput').value) && mousePos.x <= (canvas.width - Number(document.getElementById('radiusinput').value)) && mousePos.y <= (canvas.height - Number(document.getElementById('radiusinput').value)) && testCol(document.getElementById('radiusinput').value, mousePos.x, mousePos.y) && !isNaN(+(document.getElementById('massinput').value)) && !isNaN(+(document.getElementById('radiusinput').value))) {
+			entities.push([[mousePos.x, mousePos.y], [(oldMousePos.x-mousePos.x)/fps, (oldMousePos.y-mousePos.y)/fps], +(document.getElementById('massinput').value), +(document.getElementById('radiusinput').value)]);
+		}
+	}
+	if (button == 3) {
+		if (testCol('0', mousePos.x, mousePos.y)) {
+			console.log(1);
+			entities.splice(findCol('0', mousePos.x, mousePos.y), 1);
+		}
 	}
 }, false);
 function testCol(id, x, y) {
@@ -50,8 +61,8 @@ function testCol(id, x, y) {
 }
 function findCol(id, x, y) {
 	for (var e = 0; e < entities.length; e++) {
-		if (e != id && id > -1) {
-			if (Math.abs(Math.sqrt(Math.pow(entities[e][0][0] - x, 2) + Math.pow(entities[e][0][1] - y, 2))) < (entities[e][3] + entities[id][3])) {
+		if (e !== id && id > -1) {
+			if (Math.abs(Math.sqrt(Math.pow(entities[e][0][0] - x, 2) + Math.pow(entities[e][0][1] - y, 2))) < (entities[e][3] + entities[Number(id)][3])) {
 				return e;
 			}
 		}
