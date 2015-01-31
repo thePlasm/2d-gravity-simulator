@@ -14,6 +14,11 @@ Technologies used: HTML5 and Canvas
     </head>
     <body>
 		<div align='center' id='wrapper'>
+			<p id='restitutionentry'>Restitution: </p>
+			<input type='text' id='restitutioninput' value='0.5'>
+			<input type='button' id='restitutionbutton' value='Update Restitution' onClick='updateRestitution()'>
+			<p id='radiusentry'>Radius (m): </p>
+			<input type='text' id='radiusinput' value='1'>
 			<p id='massentry'>Mass (kgs): </p>
 			<input type='text' id='massinput' value='1'>
 			<canvas id='canvas'>Your browser does not support the HTML5 canvas, please update it.</canvas>
