@@ -3,7 +3,7 @@ var canvas = document.getElementById("canvas");
 canvas.width = Math.floor((window.innerWidth-80)/16)*16;
 canvas.height = Math.floor((window.innerHeight-80)/16)*16;
 var ctx = canvas.getContext("2d");
-var fps = 60;
+var fps = 80;
 var delta = [0, 0];
 var r = 0;
 var acc = 0;
@@ -11,6 +11,7 @@ var unitv = [0, 0];
 var mousePos = {x: 0, y: 0};
 var oldMousePos = {x: 0, y: 0};
 var colid = 0;
+var restitution = 0.5;
 var entities = [ 
 ];
 function getMousePos(evt) {
@@ -26,8 +27,8 @@ canvas.addEventListener('mousedown', function(evt) {
     oldMousePos = getMousePos(evt);
 }, false);
 canvas.addEventListener('mouseup', function() {
-	if (mousePos.x >= 0 && mousePos.y >= 0 && mousePos.x <= canvas.width && mousePos.y <= canvas.height && testCol(-1, mousePos.x, mousePos.y)) {
-		entities.push([[mousePos.x, mousePos.y], [(oldMousePos.x-mousePos.x)/fps, (oldMousePos.y-mousePos.y)/fps], +document.getElementById('massinput').value]);
+	if (mousePos.x >= 0 && mousePos.y >= 0 && mousePos.x <= canvas.width && mousePos.y <= canvas.height && testCol(-1, mousePos.x, mousePos.y) && !isNaN(+(document.getElementById('massinput').value))) {
+		entities.push([[mousePos.x, mousePos.y], [(oldMousePos.x-mousePos.x)/fps, (oldMousePos.y-mousePos.y)/fps], +(document.getElementById('massinput').value)]);
 	}
 }, false);
 function testCol(id, x, y) {
@@ -64,41 +65,43 @@ function update() {
 				entities[a][1][1] += (acc * unitv[1]) / fps;
 			}
 		}
-		if ((entities[a][0][0] + entities[a][1][0] >= 2.5) && (entities[a][0][1] + entities[a][1][1] >= 2.5) && (entities[a][0][0] + entities[a][1][0] <= canvas.width-2.5) && (entities[a][0][1] + entities[a][1][1] <= canvas.height-2.5) && testCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1])) {
+		if ((entities[a][0][0] + entities[a][1][0] >= 5) && (entities[a][0][1] + entities[a][1][1] >= 5) && (entities[a][0][0] + entities[a][1][0] <= canvas.width-5) && (entities[a][0][1] + entities[a][1][1] <= canvas.height-5) && testCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1])) {
 			entities[a][0][0] += entities[a][1][0];
 			entities[a][0][1] += entities[a][1][1];
 		}
 		else {
-			if (entities[a][0][0] + entities[a][1][0] < 2.5) {
-				entities[a][0][0] = 2.5;
-				entities[a][1][0] = -0.0625 * entities[a][1][0];
-				entities[a][0][0] += entities[a][1][0];
-				entities[a][0][1] += entities[a][1][1];
+			if (entities[a][0][0] + entities[a][1][0] < 5) {
+				entities[a][0][0] = 5;
+				entities[a][1][0] = -restitution * entities[a][1][0];
 			}
-			if (entities[a][0][1] + entities[a][1][1] < 2.5) {
-				entities[a][0][1] = 2.5;
-				entities[a][1][1] = -0.0625 * entities[a][1][1];
-				entities[a][0][0] += entities[a][1][0];
-				entities[a][0][1] += entities[a][1][1];
+			if (entities[a][0][1] + entities[a][1][1] < 5) {
+				entities[a][0][1] = 5;
+				entities[a][1][1] = -restitution * entities[a][1][1];
 			}
-			if (entities[a][0][0] + entities[a][1][0] > canvas.width-2.5) {
-				entities[a][0][0] = canvas.width-2.5;
-				entities[a][1][0] = -0.0625 * entities[a][1][0];
-				entities[a][0][0] += entities[a][1][0];
-				entities[a][0][1] += entities[a][1][1];
+			if (entities[a][0][0] + entities[a][1][0] > canvas.width-5) {
+				entities[a][0][0] = canvas.width-5;
+				entities[a][1][0] = -restitution * entities[a][1][0];
 			}
-			if (entities[a][0][1] + entities[a][1][1] > canvas.height-2.5) {
-				entities[a][0][1] = canvas.height-2.5;
-				entities[a][1][1] = -0.0625 * entities[a][1][1];
-				entities[a][0][0] += entities[a][1][0];
-				entities[a][0][1] += entities[a][1][1];
+			if (entities[a][0][1] + entities[a][1][1] > canvas.height-5) {
+				entities[a][0][1] = canvas.height-5;
+				entities[a][1][1] = -restitution * entities[a][1][1];
 			}
 			if (!testCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1])) {
-				colid = findCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1]); 
-				entities[a][1][0] = 0;
-				entities[a][1][1] = 0;
-				entities[colid][1][0] += entities[a][1][0] * entities[a][2] / entities[colid][2];
-				entities[colid][1][1] += entities[a][1][1] * entities[a][2] / entities[colid][2];
+				colid = findCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1]);
+				if (entities[a][2] == entities[colid][2]) {
+					entities[colid][1][0] += entities[a][1][0];
+					entities[colid][1][1] += entities[a][1][1];
+					entities[a][1][0] = 0;
+					entities[a][1][1] = 0;
+				}
+				if (entities[a][2] > entities[colid][2]) {
+					entities[colid][1][0] = 2 * entities[a][1][0];
+					entities[colid][1][1] = 2 * entities[a][1][1];
+				}
+				if (entities[a][2] < entities[colid][2]) {
+					entities[a][1][0] = -1 * entities[a][1][0];
+					entities[a][1][1] = -1 * entities[a][1][1];
+				}
 				entities[a][0][0] += entities[a][1][0];
 				entities[a][0][1] += entities[a][1][1];
 				entities[colid][0][0] += entities[colid][1][0];
