@@ -14,9 +14,6 @@ var colid = 0;
 var restitution = 0.5;
 var entities = [ 
 ];
-function updateRestitution() {
-	restitution = Number(document.getElementById('restitutioninput').value);
-}
 function getMousePos(evt) {
     return {
         x: evt.clientX - (window.innerWidth - canvas.width)/2,
@@ -62,6 +59,7 @@ function findCol(id, x, y) {
 	return true;
 }
 function update() {
+	restitution = Number(document.getElementById('restitutioninput').value);
 	for (var a = 0; a < entities.length; a++) {
 		for (var b = 0; b < entities.length; b++) {
 			if (a != b) {

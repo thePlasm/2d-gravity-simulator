@@ -46,21 +46,13 @@ body {
 	bottom: 5px;
 	right: 287px;
 }
-#restitutionbutton {
-	height: 32px;
-	width: 120px;
-	margin:auto;
-	position: absolute;
-	bottom: 5px;
-	right: 383px;
-}
 #restitutioninput {
 	height: 32px;
 	width: 96px;
 	margin:auto;
 	position: absolute;
 	bottom: 5px;
-	right: 503px;
+	right: 383px;
 }
 #restitutionentry {
 	background-color: white;
@@ -69,5 +61,5 @@ body {
 	margin:auto;
 	position: absolute;
 	bottom: 5px;
-	right: 599px;
+	right: 479px;
 }
