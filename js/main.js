@@ -14,6 +14,9 @@ var colid = 0;
 var restitution = 0.5;
 var entities = [ 
 ];
+function updateRestitution() {
+	restitution = Number(document.getElementById('restitutioninput').value);
+}
 function getMousePos(evt) {
     return {
         x: evt.clientX - (window.innerWidth - canvas.width)/2,
@@ -27,14 +30,21 @@ canvas.addEventListener('mousedown', function(evt) {
     oldMousePos = getMousePos(evt);
 }, false);
 canvas.addEventListener('mouseup', function() {
-	if (mousePos.x >= 0 && mousePos.y >= 0 && mousePos.x <= canvas.width && mousePos.y <= canvas.height && testCol(-1, mousePos.x, mousePos.y) && !isNaN(+(document.getElementById('massinput').value))) {
-		entities.push([[mousePos.x, mousePos.y], [(oldMousePos.x-mousePos.x)/fps, (oldMousePos.y-mousePos.y)/fps], +(document.getElementById('massinput').value)]);
+	if (mousePos.x >= Number(document.getElementById('radiusinput').value) && mousePos.y >= Number(document.getElementById('radiusinput').value) && mousePos.x <= (canvas.width - Number(document.getElementById('radiusinput').value)) && mousePos.y <= (canvas.height - Number(document.getElementById('radiusinput').value)) && testCol(document.getElementById('radiusinput').value, mousePos.x, mousePos.y) && !isNaN(+(document.getElementById('massinput').value)) && !isNaN(+(document.getElementById('radiusinput').value))) {
+		entities.push([[mousePos.x, mousePos.y], [(oldMousePos.x-mousePos.x)/fps, (oldMousePos.y-mousePos.y)/fps], +(document.getElementById('massinput').value), +(document.getElementById('radiusinput').value)]);
 	}
 }, false);
 function testCol(id, x, y) {
 	for (var d = 0; d < entities.length; d++) {
-		if (d != id) {
-			if (Math.abs(Math.sqrt(Math.pow(entities[d][0][0] - x, 2) + Math.pow(entities[d][0][1] - y, 2))) < 10) {
+		if ((typeof id) == 'number') {
+			if (d != id && id > -1) {
+				if (Math.abs(Math.sqrt(Math.pow(entities[d][0][0] - x, 2) + Math.pow(entities[d][0][1] - y, 2))) < (entities[d][3] + entities[id][3])) {
+					return false;
+				}
+			}
+		}
+		if ((typeof id) == 'string') {
+			if (Math.abs(Math.sqrt(Math.pow(entities[d][0][0] - x, 2) + Math.pow(entities[d][0][1] - y, 2))) < (entities[d][3] + Number(id))) {
 				return false;
 			}
 		}
@@ -43,8 +53,8 @@ function testCol(id, x, y) {
 }
 function findCol(id, x, y) {
 	for (var e = 0; e < entities.length; e++) {
-		if (e != id) {
-			if (Math.abs(Math.sqrt(Math.pow(entities[e][0][0] - x, 2) + Math.pow(entities[e][0][1] - y, 2))) < 10) {
+		if (e != id && id > -1) {
+			if (Math.abs(Math.sqrt(Math.pow(entities[e][0][0] - x, 2) + Math.pow(entities[e][0][1] - y, 2))) < (entities[e][3] + entities[id][3])) {
 				return e;
 			}
 		}
@@ -70,20 +80,21 @@ function update() {
 			entities[a][0][1] += entities[a][1][1];
 		}
 		else {
-			if (entities[a][0][0] + entities[a][1][0] < 5) {
-				entities[a][0][0] = 5;
+			if ((entities[a][0][0] + entities[a][1][0]) < entities[a][3]) {
+				console.log(1);
+				entities[a][0][0] = entities[a][3];
 				entities[a][1][0] = -restitution * entities[a][1][0];
 			}
-			if (entities[a][0][1] + entities[a][1][1] < 5) {
-				entities[a][0][1] = 5;
+			if ((entities[a][0][1] + entities[a][1][1]) < entities[a][3]) {
+				entities[a][0][1] = entities[a][3];
 				entities[a][1][1] = -restitution * entities[a][1][1];
 			}
-			if (entities[a][0][0] + entities[a][1][0] > canvas.width-5) {
-				entities[a][0][0] = canvas.width-5;
+			if ((entities[a][0][0] + entities[a][1][0]) > (canvas.width-entities[a][3])) {
+				entities[a][0][0] = canvas.width-entities[a][3];
 				entities[a][1][0] = -restitution * entities[a][1][0];
 			}
-			if (entities[a][0][1] + entities[a][1][1] > canvas.height-5) {
-				entities[a][0][1] = canvas.height-5;
+			if ((entities[a][0][1] + entities[a][1][1]) > (canvas.height-entities[a][3])) {
+				entities[a][0][1] = canvas.height-entities[a][3];
 				entities[a][1][1] = -restitution * entities[a][1][1];
 			}
 			if (!testCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1])) {
@@ -107,6 +118,10 @@ function update() {
 				entities[colid][0][0] += entities[colid][1][0];
 				entities[colid][0][1] += entities[colid][1][1];
 			}
+			else {
+				entities[a][0][0] += entities[a][1][0];
+				entities[a][0][1] += entities[a][1][1];
+			}
 		}
 	}
 }
@@ -115,7 +130,7 @@ function draw() {
 	ctx.fillRect(0, 0 , canvas.width, canvas.height);
 	for (var c = 0; c < entities.length; c++) {
 		ctx.beginPath();
-		ctx.arc(entities[c][0][0], entities[c][0][1], 5, 0, 2 * Math.PI);
+		ctx.arc(entities[c][0][0], entities[c][0][1], entities[c][3], 0, 2 * Math.PI);
 		ctx.stroke();
 	}
 }
