@@ -14,6 +14,8 @@ var colid = 0;
 var restitution = 0.5;
 var button = 0;
 var mouse = 0;
+var coltempvela = [0, 0];
+var coltempvelb = [0, 0]
 var entities = [ 
 ];
 function getMousePos(evt) {
@@ -110,22 +112,14 @@ function update() {
 				entities[a][0][1] = canvas.height-entities[a][3];
 				entities[a][1][1] = -restitution * entities[a][1][1];
 			}
-			if (!testCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1])) {
+			if (!testCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1])) {	//Collision
 				colid = findCol(a, entities[a][0][0] + entities[a][1][0], entities[a][0][1] + entities[a][1][1]);
-				if (entities[a][2] == entities[colid][2]) {
-					entities[colid][1][0] += entities[a][1][0];
-					entities[colid][1][1] += entities[a][1][1];
-					entities[a][1][0] = 0;
-					entities[a][1][1] = 0;
-				}
-				if (entities[a][2] > entities[colid][2]) {
-					entities[colid][1][0] = 2 * entities[a][1][0];
-					entities[colid][1][1] = 2 * entities[a][1][1];
-				}
-				if (entities[a][2] < entities[colid][2]) {
-					entities[a][1][0] = -1 * entities[a][1][0];
-					entities[a][1][1] = -1 * entities[a][1][1];
-				}
+				coltempvela = entities[a][1];
+				coltempvelb = entities[colid][1];
+				entities[a][1][0] = (coltempvela[0]*(entities[a][2] - entities[colid][2]) + 2*entities[colid][2]*coltempvelb[0])/(entities[a][2] + entities[colid][2]);
+				entities[a][1][1] = (coltempvela[1]*(entities[a][2] - entities[colid][2]) + 2*entities[colid][2]*coltempvelb[0])/(entities[a][2] + entities[colid][2]);
+				entities[colid][1][0] = (coltempvelb[0]*(entities[colid][2] - entities[a][2]) + 2*entities[a][2]*coltempvela[0])/(entities[colid][2] + entities[a][2]);
+				entities[colid][1][1] = (coltempvelb[1]*(entities[colid][2] - entities[a][2]) + 2*entities[a][2]*coltempvela[0])/(entities[colid][2] + entities[a][2]);
 				entities[a][0][0] += entities[a][1][0];
 				entities[a][0][1] += entities[a][1][1];
 				entities[colid][0][0] += entities[colid][1][0];
