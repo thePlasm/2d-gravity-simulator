@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-Copyright (c) 2014 Rasmus Jepsen
+Copyright (c) 2015 Rasmus Jepsen
 Licensed under the MIT license
 thePlasm presents a 2D Gravity Simulation
 A 2D Casual browser simulation
@@ -14,13 +14,15 @@ Technologies used: HTML5 and Canvas
     </head>
     <body>
 		<div align='center' id='wrapper'>
+			<p id='fpsentry'>FPS: </p>
+			<input type='text' id='fpsinput' value='60'>
 			<p id='restitutionentry'>Restitution: </p>
 			<input type='text' id='restitutioninput' value='0.5'>
 			<p id='radiusentry'>Radius (m): </p>
 			<input type='text' id='radiusinput' value='1'>
 			<p id='massentry'>Mass (kgs): </p>
 			<input type='text' id='massinput' value='1'>
-			<canvas id='canvas'>Your browser does not support the HTML5 canvas, please update it.</canvas>
+			<canvas id='canvas'oncontextmenu="return false;">Your browser does not support the HTML5 canvas, please update it.</canvas>
 			<script src='js/main.js'></script>
 			<noscript>Your browser does not support JavaScript, please update it.</noscript>
 		</div>

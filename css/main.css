@@ -63,3 +63,20 @@ body {
 	bottom: 5px;
 	right: 479px;
 }
+#fpsinput {
+	height: 32px;
+	width: 96px;
+	margin:auto;
+	position: absolute;
+	bottom: 5px;
+	right: 575px;
+}
+#fpsentry {
+	background-color: white;
+	height: 32px;
+	width: 96px;
+	margin:auto;
+	position: absolute;
+	bottom: 5px;
+	right: 671px;
+}

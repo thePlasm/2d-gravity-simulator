@@ -13,6 +13,7 @@ var oldMousePos = {x: 0, y: 0};
 var colid = 0;
 var restitution = 0.5;
 var button = 0;
+var mouse = 0;
 var entities = [ 
 ];
 function getMousePos(evt) {
@@ -25,9 +26,11 @@ canvas.addEventListener('mousemove', function(evt) {
     mousePos = getMousePos(evt);
 }, false);
 canvas.addEventListener('mousedown', function(evt) {
+	mouse = 1;
     oldMousePos = getMousePos(evt);
 }, false);
 canvas.addEventListener('mouseup', function(evt) {
+	mouse = 0;
 	evt = evt || window.event;
     button = evt.which || evt.button;
 	if (button == 1) {
@@ -71,6 +74,7 @@ function findCol(id, x, y) {
 }
 function update() {
 	restitution = Number(document.getElementById('restitutioninput').value);
+	fps = Number(document.getElementById('fpsinput').value);
 	for (var a = 0; a < entities.length; a++) {
 		for (var b = 0; b < entities.length; b++) {
 			if (a != b) {
@@ -140,6 +144,12 @@ function draw() {
 	for (var c = 0; c < entities.length; c++) {
 		ctx.beginPath();
 		ctx.arc(entities[c][0][0], entities[c][0][1], entities[c][3], 0, 2 * Math.PI);
+		ctx.stroke();
+	}
+	if (mouse == 1) {
+		ctx.beginPath();
+		ctx.moveTo(oldMousePos.x, oldMousePos.y);
+		ctx.lineTo(mousePos.x, mousePos.y);
 		ctx.stroke();
 	}
 }
